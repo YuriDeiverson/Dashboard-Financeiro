@@ -1,7 +1,6 @@
 import React from "react";
-import { AppBar, Toolbar, IconButton, Typography } from "@mui/material";
+import { AppBar, Toolbar, IconButton, Typography, Avatar } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { User } from "../utils/types";
 
 interface HeaderProps {
@@ -12,6 +11,16 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ user, toggleSidebar }) => {
+  // Função para gerar as iniciais do email
+  const getInitialsFromEmail = (email: string): string => {
+    if (!email) return "U";
+    const emailPart = email.split("@")[0];
+    const parts = emailPart.split(/[._-]+/);
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return emailPart.substring(0, 2).toUpperCase();
+  };
   return (
     <AppBar position="static" sx={{ backgroundColor: "white", color: "black" }}>
       <Toolbar>
@@ -31,7 +40,9 @@ const Header: React.FC<HeaderProps> = ({ user, toggleSidebar }) => {
 
         {user && (
           <div className="flex items-center gap-2">
-            <AccountCircleIcon />
+            <Avatar sx={{ bgcolor: "#10b981", width: 32, height: 32, fontSize: "0.875rem" }}>
+              {user.email ? getInitialsFromEmail(user.email) : "U"}
+            </Avatar>
             <Typography variant="subtitle1">{user.name}</Typography>
           </div>
         )}

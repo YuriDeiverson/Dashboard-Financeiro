@@ -7,7 +7,7 @@ import React, {
   ReactNode,
 } from "react";
 import { Filters } from "../utils/types";
-import { availableAccounts, availableIndustries } from "../utils/mockData";
+import { availableIndustries } from "../utils/mockData";
 
 interface FiltersContextType {
   filters: Filters;
@@ -21,7 +21,16 @@ const getInitialFilters = (): Filters => {
   try {
     const storedFilters = localStorage.getItem("filters");
     if (storedFilters) {
-      return JSON.parse(storedFilters);
+      const parsed = JSON.parse(storedFilters);
+      // Garantir que companies existe como string
+      if (typeof parsed.companies !== 'string') {
+        parsed.companies = '';
+      }
+      // Garantir que companiesMulti existe como array
+      if (!Array.isArray(parsed.companiesMulti)) {
+        parsed.companiesMulti = [];
+      }
+      return parsed;
     }
   } catch (error) {
     console.error("Failed to parse filters from localStorage", error);
@@ -34,10 +43,10 @@ const getInitialFilters = (): Filters => {
   return {
     startDate: startDate.toISOString().split("T")[0],
     endDate: endDate.toISOString().split("T")[0],
-    accounts: [...availableAccounts],
     industries: [...availableIndustries],
     states: [],
-    status: "all",
+    companies: '', // Empresa única - inicialmente vazia para mostrar todas
+    companiesMulti: [], // Multi-seleção de empresas - inicialmente vazio
     txType: 'all',
   };
 };

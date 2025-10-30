@@ -46,6 +46,32 @@ const CustomTooltipComponent: React.FC<{
 
 const CustomTooltip = React.memo(CustomTooltipComponent);
 
+// Helper function para formatar datas com segurança
+const formatDateLabel = (value: string | number | null | undefined): string => {
+  try {
+    if (!value) return '';
+    
+    // Se for um timestamp (número), converte para Date
+    let date: Date;
+    if (typeof value === 'number') {
+      date = new Date(value);
+    } else {
+      date = new Date(value);
+    }
+    
+    if (isNaN(date.getTime())) {
+      return String(value);
+    }
+    
+    return date.toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+    });
+  } catch {
+    return String(value) || '';
+  }
+};
+
 const TransactionCharts: React.FC<TransactionChartsProps> = ({ data }) => {
   const [recharts, setRecharts] = useState<RechartsModule | null>(null);
   const { filters } = useFilters();
@@ -149,7 +175,9 @@ const TransactionCharts: React.FC<TransactionChartsProps> = ({ data }) => {
       if (isNaN(ts)) continue;
       if (ts < startTs || ts > endTs) continue;
       if (t.status !== "completed") continue;
-      if (filters.accounts.length && !filters.accounts.includes(t.account))
+      if (filters.companies && !t.account.toLowerCase().includes(filters.companies.toLowerCase()))
+        continue;
+      if (filters.companiesMulti.length && !filters.companiesMulti.includes(t.account))
         continue;
       if (filters.states && filters.states.length) {
         const st = (t as unknown as { state?: string }).state || "";
@@ -182,7 +210,8 @@ const TransactionCharts: React.FC<TransactionChartsProps> = ({ data }) => {
     data,
     filters.startDate,
     filters.endDate,
-    filters.accounts,
+    filters.companies,
+    filters.companiesMulti,
     filters.states,
     filters.txType,
   ]);
@@ -251,7 +280,9 @@ const TransactionCharts: React.FC<TransactionChartsProps> = ({ data }) => {
       if (isNaN(ts)) continue;
       if (ts < startTs || ts > endTs) continue;
       if (t.status !== "completed") continue;
-      if (filters.accounts.length && !filters.accounts.includes(t.account))
+      if (filters.companies && !t.account.toLowerCase().includes(filters.companies.toLowerCase()))
+        continue;
+      if (filters.companiesMulti.length && !filters.companiesMulti.includes(t.account))
         continue;
       if (filters.states && filters.states.length) {
         const st = (t as unknown as { state?: string }).state || "";
@@ -286,7 +317,8 @@ const TransactionCharts: React.FC<TransactionChartsProps> = ({ data }) => {
     });
   }, [
     data,
-    filters.accounts,
+    filters.companies,
+    filters.companiesMulti,
     filters.states,
     filters.startDate,
     filters.endDate,
@@ -341,13 +373,7 @@ const TransactionCharts: React.FC<TransactionChartsProps> = ({ data }) => {
                 axisLine={false}
                 tickLine={false}
                 interval="preserveStartEnd"
-                tickFormatter={(value) => {
-                  const date = new Date(value);
-                  return date.toLocaleDateString("pt-BR", {
-                    day: "numeric",
-                    month: "numeric",
-                  });
-                }}
+                tickFormatter={formatDateLabel}
               />
               <YAxis
                 tickFormatter={(v) => formatCurrency(v as number)}
@@ -401,13 +427,7 @@ const TransactionCharts: React.FC<TransactionChartsProps> = ({ data }) => {
                 axisLine={false}
                 tickLine={false}
                 interval="preserveStartEnd"
-                tickFormatter={(value) => {
-                  const date = new Date(value);
-                  return date.toLocaleDateString("pt-BR", {
-                    day: "numeric",
-                    month: "numeric",
-                  });
-                }}
+                tickFormatter={formatDateLabel}
               />
               <YAxis
                 tickFormatter={(v) => formatCurrency(v as number)}

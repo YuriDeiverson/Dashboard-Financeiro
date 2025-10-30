@@ -29,7 +29,7 @@ export async function loadExternalTransactions(): Promise<Transaction[]> {
 
   return data.map((t, idx) => ({
     id: `ext_txn_${idx + 1}`,
-    date: new Date(t.date).toISOString(),
+    date: new Date(t.date).toISOString().split('T')[0], // Use apenas a parte da data (YYYY-MM-DD)
     description: t.account,
     amount: convertAmount(t.amount),
     type: mapType(t.transaction_type),

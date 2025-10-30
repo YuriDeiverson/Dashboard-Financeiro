@@ -22,34 +22,34 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-white via-neutral-50 to-neutral-100 dark:from-neutral-950 dark:via-neutral-900 dark:to-neutral-950 transition-colors">
-      <div className="w-full max-w-sm bg-white/80 dark:bg-neutral-900/70 backdrop-blur-xl rounded-3xl shadow-xl p-8 border border-neutral-200/60 dark:border-neutral-800/50 transition-all">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 px-4 py-8">
+      <div className="w-full max-w-md bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl p-6 sm:p-8 border border-gray-200/60 transition-all animate-fade-in">
         {/* Logo */}
         <div className="flex flex-col items-center mb-8">
-          <div className="h-12 w-12 rounded-2xl bg-gradient-to-tr from-emerald-500 to-emerald-400 flex items-center justify-center text-white text-2xl font-semibold shadow-md">
-            ₿
+          <div className="h-16 w-16 rounded-2xl bg-gradient-to-tr from-emerald-500 to-emerald-400 flex items-center justify-center text-white text-3xl font-bold shadow-lg">
+            F
           </div>
-          <h1 className="text-2xl font-semibold text-neutral-900 dark:text-neutral-100 mt-4 tracking-tight">
-            Painel Financeiro
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mt-4 tracking-tight">
+            Dashboard Financeiro
           </h1>
-          <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
-            Acompanhe suas finanças com clareza
+          <p className="text-sm text-gray-600 mt-2 text-center">
+            Gerencie suas finanças com inteligência
           </p>
         </div>
 
         {/* Mensagem de erro */}
         {error && (
-          <div className="text-sm text-center text-red-600 bg-red-50 border border-red-100 rounded-xl py-2 mb-5">
+          <div className="text-sm text-center text-red-700 bg-red-50 border border-red-200 rounded-xl py-3 px-4 mb-6 animate-slide-up">
             {error}
           </div>
         )}
 
         {/* Formulário */}
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label
               htmlFor="email"
-              className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1"
+              className="block text-sm font-semibold text-gray-700 mb-2"
             >
               E-mail
             </label>
@@ -60,14 +60,14 @@ const LoginPage: React.FC = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-3 rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white placeholder-neutral-400 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all"
+              className="w-full px-4 py-3 rounded-xl bg-gray-50 border-2 border-gray-200 text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all text-base"
             />
           </div>
 
           <div>
             <label
               htmlFor="password"
-              className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1"
+              className="block text-sm font-semibold text-gray-700 mb-2"
             >
               Senha
             </label>
@@ -78,28 +78,36 @@ const LoginPage: React.FC = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full px-4 py-3 rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white placeholder-neutral-400 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all"
+              className="w-full px-4 py-3 rounded-xl bg-gray-50 border-2 border-gray-200 text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all text-base"
             />
           </div>
 
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-3 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-medium tracking-tight transition-all shadow-sm hover:shadow-lg disabled:opacity-70 disabled:cursor-not-allowed"
+            className="w-full py-4 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-semibold tracking-tight transition-all shadow-lg hover:shadow-xl disabled:opacity-70 disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-[0.98] text-base"
           >
-            {isLoading ? "Entrando..." : "Entrar"}
+            {isLoading ? (
+              <div className="flex items-center justify-center gap-2">
+                <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" strokeDasharray="32" strokeDashoffset="32">
+                    <animate attributeName="stroke-dasharray" dur="2s" values="0 64;32 32;0 64" repeatCount="indefinite"/>
+                    <animate attributeName="stroke-dashoffset" dur="2s" values="0;-32;-64" repeatCount="indefinite"/>
+                  </circle>
+                </svg>
+                Entrando...
+              </div>
+            ) : (
+              "Entrar no Dashboard"
+            )}
           </button>
         </form>
 
-        <p className="text-center text-sm text-neutral-500 dark:text-neutral-400 mt-8">
-          Esqueceu sua senha?{" "}
-          <a
-            href="#"
-            className="text-emerald-600 dark:text-emerald-400 font-medium hover:underline transition"
-          >
-            Recuperar acesso
-          </a>
-        </p>
+        <div className="mt-8 pt-6 border-t border-gray-200">
+          <p className="text-center text-sm text-gray-600">
+            Demonstração: use qualquer email e senha
+          </p>
+        </div>
       </div>
     </div>
   );

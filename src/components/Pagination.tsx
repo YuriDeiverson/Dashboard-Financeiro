@@ -15,27 +15,29 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPage
   };
 
   return (
-    <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-200">
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-0">
       <button
         onClick={handlePrevious}
         disabled={currentPage === 1}
-        className="px-4 py-2 text-sm font-semibold text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full sm:w-auto px-4 py-2 text-sm font-semibold text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
         aria-label="Página anterior"
       >
-        Anterior
+        ← Anterior
       </button>
 
-      <span className="text-sm text-gray-600">
-        Página <strong className="text-gray-800">{currentPage}</strong> de {totalPages}
-      </span>
+      <div className="flex items-center gap-2">
+        <span className="text-sm text-gray-600">
+          Página <strong className="text-gray-800">{currentPage}</strong> de <strong>{totalPages}</strong>
+        </span>
+      </div>
 
       <button
         onClick={handleNext}
         disabled={currentPage === totalPages}
-        className="px-4 py-2 text-sm font-semibold text-white bg-emerald-600 border border-emerald-600 rounded-lg hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full sm:w-auto px-4 py-2 text-sm font-semibold text-white bg-emerald-600 border border-emerald-600 rounded-lg hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
         aria-label="Próxima página"
       >
-        Próxima
+        Próxima →
       </button>
     </div>
   );

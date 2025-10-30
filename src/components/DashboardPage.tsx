@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { useFilters } from "../hooks/useFilters";
 import Sidebar from "./Sidebar";
@@ -33,7 +33,6 @@ const DashboardPage: React.FC = () => {
 
         const dateMatch =
           transactionDate >= startDate && transactionDate <= endDate;
-        const accountMatch = filters.accounts.includes(t.account);
         const industryMatch = filters.industries.includes(t.industry);
         const stateMatch = filters.states.length
           ? filters.states.includes(
@@ -44,17 +43,14 @@ const DashboardPage: React.FC = () => {
           filters.txType && filters.txType !== "all"
             ? filters.txType === t.type
             : true;
-        const statusMatch =
-          filters.status === "all" || filters.status === t.status;
+        const companyMatch = filters.companies
+          ? t.account.toLowerCase().includes(filters.companies.toLowerCase())
+          : true;
+        const companyMultiMatch = filters.companiesMulti.length
+          ? filters.companiesMulti.includes(t.account)
+          : true;
 
-        return (
-          dateMatch &&
-          accountMatch &&
-          industryMatch &&
-          stateMatch &&
-          statusMatch &&
-          typeMatch
-        );
+        return dateMatch && industryMatch && stateMatch && typeMatch && companyMatch && companyMultiMatch;
       })
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   }, [transactions, filters]);
@@ -67,11 +63,8 @@ const DashboardPage: React.FC = () => {
         if (!mounted) return;
         setTransactions(list);
 
-        // update filters so dataset items are included (accounts, industries, and date range)
+        // update filters so dataset items are included (industries, companies and date range)
         try {
-          const accounts = Array.from(
-            new Set(list.map((t) => t.account)),
-          ).slice(0, 200);
           const industries = Array.from(
             new Set(list.map((t) => t.industry)),
           ).slice(0, 200);
@@ -79,6 +72,9 @@ const DashboardPage: React.FC = () => {
             new Set(
               list.map((t) => (t as unknown as { state?: string }).state),
             ),
+          ).slice(0, 200);
+          const allCompanies = Array.from(
+            new Set(list.map((t) => t.account)),
           ).slice(0, 200);
           const dates = list
             .map((t) => new Date(t.date).getTime())
@@ -90,9 +86,9 @@ const DashboardPage: React.FC = () => {
 
           setFilters((prev) => ({
             ...prev,
-            accounts,
             industries,
             states,
+            companiesMulti: allCompanies, // Todas as empresas selecionadas por padrão
             startDate: minIso,
             endDate: maxIso,
           }));
@@ -125,29 +121,9 @@ const DashboardPage: React.FC = () => {
     [transactions],
   );
 
-  // Compute accounts filtered by currently selected states
-  const filteredAccountsOptions = useMemo(() => {
-    if (!filters.states || filters.states.length === 0) {
-      return Array.from(new Set(transactions.map((t) => t.account)));
-    }
-    const set = new Set<string>();
-    transactions.forEach((t) => {
-      const st = (t as unknown as { state?: string }).state || "";
-      if (filters.states.includes(st)) set.add(t.account);
-    });
-    return Array.from(set);
-  }, [transactions, filters.states]);
-
-  // When available accounts change because of state selection, adjust selected accounts:
-  useEffect(() => {
-    const available = filteredAccountsOptions;
-    setFilters((prev) => {
-      if (!available.length) return prev; // don't clobber if no available accounts
-      const intersection = prev.accounts.filter((a) => available.includes(a));
-      if (intersection.length) return { ...prev, accounts: intersection };
-      return { ...prev, accounts: available };
-    });
-  }, [filteredAccountsOptions, setFilters]);
+  const companiesOptions = useMemo(() => {
+    return Array.from(new Set(transactions.map((t) => t.account))).slice(0, 200);
+  }, [transactions]);
 
   const renderContent = () => {
     switch (activePage) {
@@ -179,8 +155,8 @@ const DashboardPage: React.FC = () => {
         <Header
           user={user}
           toggleSidebar={() => setIsSidebarOpen((prev) => !prev)}
-          accountsOptions={filteredAccountsOptions}
           statesOptions={statesOptions}
+          companiesOptions={companiesOptions}
         />
 
         <main className="flex-1 overflow-y-auto px-8 py-6">

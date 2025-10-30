@@ -25,10 +25,10 @@ export interface Transaction {
 export interface Filters {
   startDate: string;
   endDate: string;
-  accounts: string[];
   industries: string[];
   states: string[];
-  status: TransactionStatus | 'all';
+  companies: string; // Empresa única selecionada  
+  companiesMulti: string[]; // Multi-seleção de empresas
   txType?: 'all' | 'income' | 'expense';
 }
 
