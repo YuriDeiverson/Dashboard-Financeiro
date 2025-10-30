@@ -312,14 +312,14 @@ const Header: React.FC<HeaderProps> = ({ user, toggleSidebar, statesOptions, com
   };
 
   return (
-    <header className="mb-6">
+    <header className="mb-4 sm:mb-6">
       {/* Header superior com perfil */}
-      <div className="bg-white/80 backdrop-blur-md rounded-2xl p-4 sm:p-5 shadow-[0_6px_24px_rgba(12,12,16,0.06)] flex items-center justify-between mb-4 sm:mb-6">
+      <div className="bg-white/80 backdrop-blur-md rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-5 shadow-[0_6px_24px_rgba(12,12,16,0.06)] flex items-center justify-between mb-3 sm:mb-4 lg:mb-6">
         <div className="flex items-center gap-2 sm:gap-3">
           <button onClick={toggleSidebar} className="text-gray-500 lg:hidden focus:outline-none cursor-pointer p-1">
             {ICONS.menu}
           </button>
-          <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Visão Geral</h2>
+          <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900">Visão Geral</h2>
         </div>
 
         <div className="flex items-center gap-2 sm:gap-4">
@@ -340,9 +340,9 @@ const Header: React.FC<HeaderProps> = ({ user, toggleSidebar, statesOptions, com
       </div>
 
       {/* Filtros */}
-      <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-[0_6px_24px_rgba(12,12,16,0.06)]">
+      <div className="bg-white/80 backdrop-blur-md rounded-xl sm:rounded-2xl shadow-[0_6px_24px_rgba(12,12,16,0.06)]">
         {/* Botão para expandir filtros no mobile */}
-        <div className="lg:hidden p-4 border-b border-gray-100">
+        <div className="lg:hidden p-3 sm:p-4 border-b border-gray-100">
           <button
             onClick={() => setIsFiltersExpanded(!isFiltersExpanded)}
             className="flex items-center justify-between w-full text-left focus:outline-none"
@@ -357,11 +357,11 @@ const Header: React.FC<HeaderProps> = ({ user, toggleSidebar, statesOptions, com
         {/* Container dos filtros - sempre visível no desktop, condicional no mobile */}
         <div className={`
           ${isFiltersExpanded ? 'block' : 'hidden'} lg:block
-          p-4 sm:p-5 transition-all duration-300 ease-in-out
+          p-3 sm:p-4 lg:p-5 transition-all duration-300 ease-in-out
         `}>
-          {/* Layout mobile - stack vertical */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 sm:gap-4">
-          <div className="sm:col-span-2 lg:col-span-1">
+          {/* Layout responsivo melhorado */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 2xl:grid-cols-7 gap-3 sm:gap-4 lg:gap-5">
+          <div className="sm:col-span-2 lg:col-span-1 xl:col-span-2">
             <label className={labelClass}>Período</label>
             <DateRangePicker
               startDate={filters.startDate}
@@ -371,7 +371,7 @@ const Header: React.FC<HeaderProps> = ({ user, toggleSidebar, statesOptions, com
               onToggle={() => setOpenDropdown((p) => (p === 'dateRange' ? null : 'dateRange'))}
             />
           </div>
-          <div className="sm:col-span-2 lg:col-span-1">
+          <div className="sm:col-span-1 lg:col-span-1 xl:col-span-1">
             <label className={labelClass}>Buscar Empresas</label>
             <SearchableDropdown
               options={companiesOptions}
@@ -380,7 +380,7 @@ const Header: React.FC<HeaderProps> = ({ user, toggleSidebar, statesOptions, com
               placeholder="Digite para buscar empresas..."
             />
           </div>
-          <div className="sm:col-span-2 lg:col-span-1">
+          <div className="sm:col-span-1 lg:col-span-1 xl:col-span-1">
             <label className={labelClass}>Empresas</label>
             <MultiSelectDropdown
               options={filteredCompaniesOptions}
@@ -399,7 +399,7 @@ const Header: React.FC<HeaderProps> = ({ user, toggleSidebar, statesOptions, com
               onToggle={() => setOpenDropdown((p) => (p === 'companiesMulti' ? null : 'companiesMulti'))}
             />
           </div>
-          <div className="sm:col-span-2 lg:col-span-1">
+          <div className="sm:col-span-1 lg:col-span-1 xl:col-span-1">
             <label className={labelClass}>Estados</label>
             <MultiSelectDropdown
               options={statesOptions}
@@ -410,7 +410,7 @@ const Header: React.FC<HeaderProps> = ({ user, toggleSidebar, statesOptions, com
               onToggle={() => setOpenDropdown((p) => (p === 'states' ? null : 'states'))}
             />
           </div>
-          <div className="sm:col-span-1">
+          <div className="sm:col-span-1 lg:col-span-1 xl:col-span-1">
             <label className={labelClass}>Tipo</label>
             <select
               value={filters.txType ?? 'all'}

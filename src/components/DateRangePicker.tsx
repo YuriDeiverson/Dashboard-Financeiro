@@ -19,7 +19,22 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
 }) => {
   const [tempStartDate, setTempStartDate] = useState(startDate);
   const [tempEndDate, setTempEndDate] = useState(endDate);
-  const [currentMonth, setCurrentMonth] = useState(new Date());
+  
+  // Inicializar currentMonth com a data de início dos dados
+  const getInitialMonth = () => {
+    try {
+      // Se as datas estão resetadas (dados totais), usar data atual
+      if (startDate === '1900-01-01' || !startDate) {
+        return new Date();
+      }
+      // Caso contrário, usar a data de início dos dados
+      return new Date(startDate);
+    } catch {
+      return new Date();
+    }
+  };
+  
+  const [currentMonth, setCurrentMonth] = useState(getInitialMonth());
   const [selectingStart, setSelectingStart] = useState(true);
 
   const buttonRef = useRef<HTMLButtonElement | null>(null);
@@ -46,6 +61,17 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
     };
   }, [isOpen]);
 
+  // Atualizar currentMonth quando startDate mudar (ex: novos dados carregados)
+  useEffect(() => {
+    try {
+      if (startDate !== '1900-01-01' && startDate) {
+        setCurrentMonth(new Date(startDate));
+      }
+    } catch {
+      // Se houver erro na data, manter o currentMonth atual
+    }
+  }, [startDate]);
+
   useEffect(() => {
     if (!isOpen) return;
     const onDocClick = (ev: MouseEvent) => {
@@ -59,6 +85,10 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
   }, [isOpen, onToggle]);
 
   const formatDisplayDate = (date: string) => {
+    // Se a data está resetada (datas muito amplas), mostrar texto especial
+    if (date === '1900-01-01') return 'Início';
+    if (date === '2099-12-31') return 'Fim';
+    
     try {
       return new Date(date).toLocaleDateString('pt-BR', {
         day: '2-digit',
@@ -124,6 +154,18 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
     setTempStartDate(startDate);
     setTempEndDate(endDate);
     setSelectingStart(true);
+    onToggle();
+  };
+
+  const handleReset = () => {
+    // Limpar completamente os filtros de data - sem restrições
+    // Usar datas muito amplas para mostrar todos os dados
+    const startDate = '1900-01-01'; // Data muito antiga
+    const endDate = '2099-12-31';   // Data muito futura
+    
+    setTempStartDate(startDate);
+    setTempEndDate(endDate);
+    onChange(startDate, endDate);
     onToggle();
   };
 
@@ -248,9 +290,9 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
         </div>
       </div>
 
-      <div className="flex">
+      <div className="flex flex-col md:flex-row">
         {renderCalendar(0)}
-        <div className="border-l border-gray-200"></div>
+        <div className="border-l-0 md:border-l border-t md:border-t-0 border-gray-200"></div>
         {renderCalendar(1)}
       </div>
 
@@ -262,13 +304,22 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
         >
           Cancelar
         </button>
-        <button
-          type="button"
-          onClick={handleApply}
-          className="px-4 py-2 text-sm bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors"
-        >
-          Aplicar
-        </button>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={handleReset}
+            className="px-4 py-2 text-sm text-orange-600 hover:bg-orange-50 border border-orange-200 rounded-lg transition-colors"
+          >
+            Resetar
+          </button>
+          <button
+            type="button"
+            onClick={handleApply}
+            className="px-4 py-2 text-sm bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors"
+          >
+            Aplicar
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -282,7 +333,10 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
         className="w-full text-left bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-emerald-300 cursor-pointer flex items-center justify-between"
       >
         <span>
-          {formatDisplayDate(startDate)} - {formatDisplayDate(endDate)}
+          {(startDate === '1900-01-01' && endDate === '2099-12-31') 
+            ? 'Todos os dados' 
+            : `${formatDisplayDate(startDate)} - ${formatDisplayDate(endDate)}`
+          }
         </span>
         <div className={`transform transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}>
           {ICONS.chevronDown}
